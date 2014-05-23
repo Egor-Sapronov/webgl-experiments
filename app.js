@@ -21,8 +21,9 @@ function init() {
     document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.y = 500;
-    camera.position.z = 500;
+    camera.position.y = 100;
+    camera.position.z = 100;
+    camera.position.x=100;
 
     controls = new THREE.TrackballControls(camera);
 
@@ -172,11 +173,35 @@ function init() {
         scene.add(cube);
     }
 
+    function roof(){
+        var geometry = new THREE.BoxGeometry(1,35,50);
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 4));
+        var material = new THREE.MeshBasicMaterial( { color: 0xffffff, overdraw: 0.5 } );
+        cube = new THREE.Mesh(geometry,material);
+        cube.position.x=25;
+        cube.position.y=36;
+        cube.position.z=12;
+        scene.add(cube);
+
+        var geometry = new THREE.BoxGeometry(50,35,1);
+//        geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 4));
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 4));
+//        geometry.applyMatrix(new THREE.Matrix4().makeRotationZ(-Math.PI / 2));
+        var material = new THREE.MeshBasicMaterial( { color: 0xffffff, overdraw: 0.5 } );
+        cube = new THREE.Mesh(geometry,material);
+        cube.position.x=25;
+        cube.position.y=36;
+        cube.position.z=-12;
+        scene.add(cube);
+    }
+
     frontWall(0);
     frontWall(50);
     wall();
     wallWithDoor();
     floor();
+    roof();
 
     renderer = new THREE.CanvasRenderer();
     renderer.setClearColor(0xf0f0f0);
@@ -252,6 +277,7 @@ function onDocumentTouchMove(event) {
 
 function animate() {
     requestAnimationFrame(animate);
+
     controls.update();
     render();
 }
