@@ -18,6 +18,11 @@ brickTexture.wrapS = brickTexture.wrapT = THREE.RepeatWrapping;
 brickTexture.repeat.set(2, 2);
 var brickMaterial = new THREE.MeshBasicMaterial({map: brickTexture, side: THREE.DoubleSide});
 
+var wallTexture=new THREE.ImageUtils.loadTexture('wall.jpg');
+wallTexture.wrapS=wallTexture.wrapT=THREE.RepeatWrapping;
+wallTexture.repeat.set(2,2);
+var wallMaterial=new THREE.MeshBasicMaterial({map:wallTexture,side:THREE.BackSide});
+
 var roofTexture = new THREE.ImageUtils.loadTexture('roof.jpg');
 roofTexture.wrapS = roofTexture.wrapT = THREE.RepeatWrapping;
 roofTexture.repeat.set(2, 2);
@@ -145,99 +150,145 @@ function onDocumentTouchMove(event) {
 }
 
 function createWalls() {
-    var geometry = new THREE.PlaneGeometry(40, 3, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 1.5;
+    var material = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide,opacity:0.3 });
+    var material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide,opacity:0.0 });
+    var materials = [
+        material,
+        brickMaterial,
+        wallMaterial,
+        material2
+    ];
+
+    // Back wall with 2 windows
+    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex=1;
+    }
+    geometry.faces[44].materialIndex=0;
+    geometry.faces[45].materialIndex=0;
+    geometry.faces[64].materialIndex=0;
+    geometry.faces[65].materialIndex=0;
+    geometry.faces[84].materialIndex=0;
+    geometry.faces[85].materialIndex=0;
+    geometry.faces[104].materialIndex=0;
+    geometry.faces[105].materialIndex=0;
+    geometry.faces[124].materialIndex=0;
+    geometry.faces[125].materialIndex=0;
+    geometry.faces[54].materialIndex=0;
+    geometry.faces[55].materialIndex=0;
+    geometry.faces[74].materialIndex=0;
+    geometry.faces[75].materialIndex=0;
+    geometry.faces[94].materialIndex=0;
+    geometry.faces[95].materialIndex=0;
+    geometry.faces[114].materialIndex=0;
+    geometry.faces[115].materialIndex=0;
+    geometry.faces[134].materialIndex=0;
+    geometry.faces[135].materialIndex=0;
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
     group.add(mesh);
 
-    var geometry = new THREE.PlaneGeometry(40, 3, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 10;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(10, 5.5, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(10, 5.5, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = 15;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(10, 5.5, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = -15;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(10, 3, 10, 10);
+    // Front wall with door
+    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 1.5;
-    mesh.position.x = 20;
-    mesh.position.z = 5;
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex=1;
+    }
+    geometry.faces[82].materialIndex=3;
+    geometry.faces[83].materialIndex=3;
+    geometry.faces[102].materialIndex=3;
+    geometry.faces[103].materialIndex=3;
+    geometry.faces[122].materialIndex=3;
+    geometry.faces[123].materialIndex=3;
+    geometry.faces[142].materialIndex=3;
+    geometry.faces[143].materialIndex=3;
+    geometry.faces[162].materialIndex=3;
+    geometry.faces[163].materialIndex=3;
+    geometry.faces[182].materialIndex=3;
+    geometry.faces[183].materialIndex=3;
+    geometry.faces[84].materialIndex=3;
+    geometry.faces[85].materialIndex=3;
+    geometry.faces[104].materialIndex=3;
+    geometry.faces[105].materialIndex=3;
+    geometry.faces[124].materialIndex=3;
+    geometry.faces[125].materialIndex=3;
+    geometry.faces[144].materialIndex=3;
+    geometry.faces[145].materialIndex=3;
+    geometry.faces[164].materialIndex=3;
+    geometry.faces[165].materialIndex=3;
+    geometry.faces[184].materialIndex=3;
+    geometry.faces[185].materialIndex=3;
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z=5;
+    mesh.position.x=20;
     group.add(mesh);
 
-    var geometry = new THREE.PlaneGeometry(10, 3, 10, 10);
+    // Wall
+    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex=1;
+    }
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z=10;
+    group.add(mesh);
+
+    // Side wall with two windows
+    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 10;
-    mesh.position.x = 20;
-    mesh.position.z = 5;
-    group.add(mesh);
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex=1;
+    }
+    geometry.faces[42].materialIndex=0;
+    geometry.faces[43].materialIndex=0;
+    geometry.faces[62].materialIndex=0;
+    geometry.faces[63].materialIndex=0;
+    geometry.faces[82].materialIndex=0;
+    geometry.faces[83].materialIndex=0;
+    geometry.faces[102].materialIndex=0;
+    geometry.faces[103].materialIndex=0;
+    geometry.faces[122].materialIndex=0;
+    geometry.faces[123].materialIndex=0;
+    geometry.faces[44].materialIndex=0;
+    geometry.faces[45].materialIndex=0;
+    geometry.faces[64].materialIndex=0;
+    geometry.faces[65].materialIndex=0;
+    geometry.faces[84].materialIndex=0;
+    geometry.faces[85].materialIndex=0;
+    geometry.faces[104].materialIndex=0;
+    geometry.faces[105].materialIndex=0;
+    geometry.faces[124].materialIndex=0;
+    geometry.faces[125].materialIndex=0;
 
-    var geometry = new THREE.PlaneGeometry(3, 5.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = 20;
-    mesh.position.z = 5;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(1, 5.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = 20;
-    mesh.position.z = 0.5;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(1, 5.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = 20;
-    mesh.position.z = 9.5;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(10, 11.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 5.75;
-    mesh.position.x = -20;
-    mesh.position.z = 5;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(40, 6.5, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 8.25;
-    mesh.position.z = 10;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(30, 5.25, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 2.5;
-    mesh.position.x = 5;
-    mesh.position.z = 10;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(6, 5.25, 10, 10);
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 2.5;
-    mesh.position.x = -17;
-    mesh.position.z = 10;
+    geometry.faces[56].materialIndex=0;
+    geometry.faces[57].materialIndex=0;
+    geometry.faces[54].materialIndex=0;
+    geometry.faces[55].materialIndex=0;
+    geometry.faces[76].materialIndex=0;
+    geometry.faces[77].materialIndex=0;
+    geometry.faces[74].materialIndex=0;
+    geometry.faces[75].materialIndex=0;
+    geometry.faces[96].materialIndex=0;
+    geometry.faces[97].materialIndex=0;
+    geometry.faces[94].materialIndex=0;
+    geometry.faces[95].materialIndex=0;
+    geometry.faces[116].materialIndex=0;
+    geometry.faces[117].materialIndex=0;
+    geometry.faces[114].materialIndex=0;
+    geometry.faces[115].materialIndex=0;
+    geometry.faces[136].materialIndex=0;
+    geometry.faces[137].materialIndex=0;
+    geometry.faces[134].materialIndex=0;
+    geometry.faces[135].materialIndex=0;
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z=5;
+    mesh.position.x=-20;
     group.add(mesh);
 }
 
@@ -288,7 +339,17 @@ function animate() {
 }
 
 function render() {
-    if (controls.enabled == false)
-        group.position.x += ( targetRotation - group.rotation.y ) * 0.5;
+    if (controls.enabled == false) {
+
+        if (group.position.x < 30 && group.position.x > -30)
+            group.position.x += ( targetRotation - group.position.y ) * 0.05;
+        else {
+            if (group.position.x >= 30)
+                group.position.x = 29;
+            else
+                group.position.x = -29;
+        }
+    }
+
     renderer.render(scene, camera);
 }
