@@ -4,9 +4,10 @@ var camera, scene, renderer, controls, light, dirLight, hemiLight;
 
 var group;
 
+var houseLight, pointLight, lamp;
+
 var targetRotation = 0;
 var targetRotationOnMouseDown = 0;
-var pointLight;
 var mouseX = 0;
 var mouseXOnMouseDown = 0;
 
@@ -69,7 +70,6 @@ function init() {
 
 
     group = new THREE.Object3D();
-//    group.castShadow = true;
     group.position.z = -5;
     scene.add(group);
 
@@ -86,7 +86,7 @@ function init() {
     sunlight.shadowCameraBottom = -100;
     scene.add(sunlight);
 
-    var houseLight = new THREE.SpotLight(0xffffff, 0.5);
+    houseLight = new THREE.SpotLight(0xffffff, 0.5);
     houseLight.position.set(0, 11, 3);
     houseLight.castShadow = true;
     houseLight.shadowDarkness = 0.5;
@@ -98,11 +98,11 @@ function init() {
     houseLight.shadowCameraBottom = -3;
     group.add(houseLight);
 
-    var pointLight = new THREE.PointLight(0xffffff, 3, 20);
+    pointLight = new THREE.PointLight(0xffffff, 3, 20);
     pointLight.position = houseLight.position;
     group.add(pointLight);
     var sphere = new THREE.SphereGeometry(0.5, 16, 8);
-    var lamp = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    lamp = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xffffff }));
     lamp.position = houseLight.position;
     group.add(lamp);
 
@@ -123,6 +123,7 @@ function init() {
     document.addEventListener('touchmove', onDocumentTouchMove, false);
     document.addEventListener('keydown', onDocumentKeyDown, false);
     document.addEventListener('keyup', onDocumentKeyUp, false);
+    window.addEventListener( 'resize', onWindowResize, false );
 }
 
 function createModel() {
@@ -353,15 +354,34 @@ function createGround() {
 function createPicture() {
     var geometry = new THREE.PlaneGeometry(3, 4);
     var mesh = new THREE.Mesh(geometry, pictureMaterial);
-    mesh.position.z = -4.9;
+    mesh.position.z = 0.1;
     mesh.position.y = 6;
     mesh.position.x = 6;
-    scene.add(mesh);
+    group.add(mesh);
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function onDocumentKeyDown(event) {
     if (event.keyCode == 16)
         controls.enabled = false;
+
+    if (event.keyCode == 32) {
+        if (houseLight.intensity == 0) {
+            houseLight.intensity = 0.5;
+            pointLight.intensity = 3;
+            lamp.visible = true;
+        } else {
+            houseLight.intensity = 0;
+            pointLight.intensity = 0;
+            lamp.visible = false;
+        }
+    }
 }
 
 function onDocumentKeyUp(event) {
@@ -451,10 +471,5 @@ function render() {
                 group.position.x = -29.999999;
         }
     }
-    var time = Date.now() * 0.0005;
-//    light.position.x = Math.sin(time * 0.7) * 30;
-//    light.position.y = Math.cos(time * 0.5) * 40;
-//    light.position.z = Math.cos(time * 0.3) * 30;
-
     renderer.render(scene, camera);
 }
