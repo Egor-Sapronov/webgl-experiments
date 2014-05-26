@@ -33,6 +33,16 @@ woodTexture.wrapS = woodTexture.wrapT = THREE.RepeatWrapping;
 woodTexture.repeat.set(2, 2);
 var woodMaterial = new THREE.MeshLambertMaterial({map: woodTexture, side: THREE.DoubleSide, shading: THREE.FlatShading});
 
+var floorTexture = new THREE.ImageUtils.loadTexture('checkerboard.jpg');
+floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+floorTexture.repeat.set(10, 10);
+var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.DoubleSide, ambient: 0xffffff, color: 0xffffff, specular: 0x050505   });
+
+var grassTexture = new THREE.ImageUtils.loadTexture('grass.jpg');
+grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
+grassTexture.repeat.set(10, 10);
+var GrassMaterial = new THREE.MeshPhongMaterial({map: grassTexture, side: THREE.DoubleSide});
+
 
 init();
 animate();
@@ -57,31 +67,23 @@ function init() {
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    // Floor
-    var floorTexture = new THREE.ImageUtils.loadTexture('checkerboard.jpg');
-    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-    floorTexture.repeat.set(10, 10);
-    var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.DoubleSide, ambient: 0xffffff, color: 0xffffff, specular: 0x050505   });
-    var floorGeometry = new THREE.PlaneGeometry(100, 100, 10, 10);
-    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.position.y = 0;
-    floor.rotation.x = Math.PI / 2;
-    scene.add(floor);
 
     group = new THREE.Object3D();
     scene.add(group);
 
+    // Lights
     light = new THREE.PointLight(0xff0040, 2, 50);
     scene.add(light);
     var sphere = new THREE.SphereGeometry(0.5, 16, 8);
-
     var l1 = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
     l1.position = light.position;
     scene.add(l1);
 
+    // House
     createWalls();
     createRoof();
     createTable();
+    createFloor();
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
@@ -121,6 +123,135 @@ function createTable() {
     mesh.position.y = 1.5;
     mesh.position.z = 4;
     mesh.position.x = -2;
+    group.add(mesh);
+}
+
+function createWalls() {
+    var material = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3 });
+    var material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.0 });
+    var materials = [
+        material,
+        brickMaterial,
+        wallMaterial,
+        material2
+    ];
+
+    // Back wall with 2 windows
+    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex = 1;
+    }
+
+    for (var i = 44; i <= 134; i += 10) {
+        geometry.faces[i].materialIndex = 0;
+        geometry.faces[i + 1].materialIndex = 0;
+    }
+
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z = 10;
+    group.add(mesh);
+
+    // Front wall with door
+    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex = 1;
+    }
+
+    for (var i = 82; i <= 182; i += 20) {
+        geometry.faces[i].materialIndex = 3;
+        geometry.faces[i + 1].materialIndex = 3;
+        geometry.faces[i + 2].materialIndex = 3;
+        geometry.faces[i + 3].materialIndex = 3;
+    }
+
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z = 5;
+    mesh.position.x = 20;
+    group.add(mesh);
+
+    // Wall
+    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex = 1;
+    }
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+//    mesh.position.z=10;
+    group.add(mesh);
+
+    // Side wall with two windows
+    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
+    var l = geometry.faces.length;
+    for (var i = 0; i < l; i++) {
+        geometry.faces[i].materialIndex = 1;
+    }
+
+    for (var i = 42; i <= 132; i += 10) {
+        geometry.faces[i].materialIndex = 0;
+        geometry.faces[i + 1].materialIndex = 0;
+        geometry.faces[i + 2].materialIndex = 0;
+        geometry.faces[i + 3].materialIndex = 0;
+    }
+
+    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
+    mesh.position.y = 5;
+    mesh.position.z = 5;
+    mesh.position.x = -20;
+    group.add(mesh);
+}
+
+function createRoof() {
+    var geometry = new THREE.PlaneGeometry(40, 8.5, 10, 10);
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 4));
+    var mesh = new THREE.Mesh(geometry, roofMaterial);
+    mesh.position.z = 2;
+    mesh.position.y = 12.2;
+    group.add(mesh);
+
+    var geometry = new THREE.PlaneGeometry(40, 8.5, 10, 10);
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 4));
+    var mesh = new THREE.Mesh(geometry, roofMaterial);
+    mesh.position.z = 8;
+    mesh.position.y = 12.2;
+    group.add(mesh);
+
+    var geometry = new THREE.Geometry();
+    v1 = new THREE.Vector3(0, 0, 0);
+    v2 = new THREE.Vector3(10, 0, 0);
+    v3 = new THREE.Vector3(5, 5, 0);
+
+    geometry.vertices.push(v1);
+    geometry.vertices.push(v2);
+    geometry.vertices.push(v3);
+
+    geometry.faces.push(new THREE.Face3(0, 1, 2));
+    geometry.computeFaceNormals();
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
+    var mesh = new THREE.Mesh(geometry, brickMaterial);
+    mesh.position.y = 10;
+    mesh.position.z = 0;
+    mesh.position.x = 20;
+    group.add(mesh);
+
+    var mesh = new THREE.Mesh(geometry, brickMaterial);
+    mesh.position.y = 10;
+    mesh.position.z = 0;
+    mesh.position.x = -20;
+    group.add(mesh);
+}
+
+function createFloor() {
+    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    var mesh = new THREE.Mesh(geometry, floorMaterial);
+    mesh.position.z = 5;
     group.add(mesh);
 }
 
@@ -197,126 +328,6 @@ function onDocumentTouchMove(event) {
 
 }
 
-function createWalls() {
-    var material = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.3 });
-    var material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, opacity: 0.0 });
-    var materials = [
-        material,
-        brickMaterial,
-        wallMaterial,
-        material2
-    ];
-
-    // Back wall with 2 windows
-    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
-    var l = geometry.faces.length;
-    for (var i = 0; i < l; i++) {
-        geometry.faces[i].materialIndex = 1;
-    }
-
-    for (var i = 44; i <= 134; i += 10) {
-        geometry.faces[i].materialIndex=0;
-        geometry.faces[i+1].materialIndex=0;
-    }
-
-    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-    mesh.position.y = 5;
-    mesh.position.z = 10;
-    group.add(mesh);
-
-    // Front wall with door
-    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var l = geometry.faces.length;
-    for (var i = 0; i < l; i++) {
-        geometry.faces[i].materialIndex = 1;
-    }
-
-    for (var i = 82; i <= 182; i += 20) {
-        geometry.faces[i].materialIndex=3;
-        geometry.faces[i+1].materialIndex=3;
-        geometry.faces[i+2].materialIndex=3;
-        geometry.faces[i+3].materialIndex=3;
-    }
-
-    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-    mesh.position.y = 5;
-    mesh.position.z = 5;
-    mesh.position.x = 20;
-    group.add(mesh);
-
-    // Wall
-    var geometry = new THREE.PlaneGeometry(40, 10, 10, 10);
-    var l = geometry.faces.length;
-    for (var i = 0; i < l; i++) {
-        geometry.faces[i].materialIndex = 1;
-    }
-    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-    mesh.position.y = 5;
-//    mesh.position.z=10;
-    group.add(mesh);
-
-    // Side wall with two windows
-    var geometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var l = geometry.faces.length;
-    for (var i = 0; i < l; i++) {
-        geometry.faces[i].materialIndex = 1;
-    }
-
-    for (var i = 42; i <= 132; i += 10) {
-        geometry.faces[i].materialIndex=0;
-        geometry.faces[i+1].materialIndex=0;
-        geometry.faces[i+2].materialIndex=0;
-        geometry.faces[i+3].materialIndex=0;
-    }
-    
-    var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
-    mesh.position.y = 5;
-    mesh.position.z = 5;
-    mesh.position.x = -20;
-    group.add(mesh);
-}
-
-function createRoof() {
-    var geometry = new THREE.PlaneGeometry(40, 8.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 4));
-    var mesh = new THREE.Mesh(geometry, roofMaterial);
-    mesh.position.z = 2;
-    mesh.position.y = 12.2;
-    group.add(mesh);
-
-    var geometry = new THREE.PlaneGeometry(40, 8.5, 10, 10);
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 4));
-    var mesh = new THREE.Mesh(geometry, roofMaterial);
-    mesh.position.z = 8;
-    mesh.position.y = 12.2;
-    group.add(mesh);
-
-    var geometry = new THREE.Geometry();
-    v1 = new THREE.Vector3(0, 0, 0);
-    v2 = new THREE.Vector3(10, 0, 0);
-    v3 = new THREE.Vector3(5, 5, 0);
-
-    geometry.vertices.push(v1);
-    geometry.vertices.push(v2);
-    geometry.vertices.push(v3);
-
-    geometry.faces.push(new THREE.Face3(0, 1, 2));
-    geometry.computeFaceNormals();
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI / 2));
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 10;
-    mesh.position.z = 0;
-    mesh.position.x = 20;
-    group.add(mesh);
-
-    var mesh = new THREE.Mesh(geometry, brickMaterial);
-    mesh.position.y = 10;
-    mesh.position.z = 0;
-    mesh.position.x = -20;
-    group.add(mesh);
-}
 
 function animate() {
     requestAnimationFrame(animate);
