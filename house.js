@@ -39,6 +39,9 @@ var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE
 var grassTexture = new THREE.ImageUtils.loadTexture('grass.jpg');
 var grassMaterial = new THREE.MeshPhongMaterial({map: grassTexture, side: THREE.DoubleSide, overdraw: 0});
 
+var pictureTexture = new THREE.ImageUtils.loadTexture('picture.jpg');
+var pictureMaterial = new THREE.MeshPhongMaterial({map: pictureTexture, side: THREE.FrontSide});
+
 
 init();
 animate();
@@ -66,7 +69,7 @@ function init() {
 
 
     group = new THREE.Object3D();
-    group.castShadow = true;
+//    group.castShadow = true;
     group.position.z = -5;
     scene.add(group);
 
@@ -86,7 +89,7 @@ function init() {
     var houseLight = new THREE.SpotLight(0xffffff, 0.5);
     houseLight.position.set(0, 11, 3);
     houseLight.castShadow = true;
-    houseLight.shadowDarkness=0.5;
+    houseLight.shadowDarkness = 0.5;
     houseLight.shadowCameraNear = 3;
     houseLight.shadowCameraFar = 12;
     houseLight.shadowCameraLeft = -3;
@@ -95,7 +98,7 @@ function init() {
     houseLight.shadowCameraBottom = -3;
     group.add(houseLight);
 
-    var pointLight = new THREE.PointLight(0xffffff, 3,20);
+    var pointLight = new THREE.PointLight(0xffffff, 3, 20);
     pointLight.position = houseLight.position;
     group.add(pointLight);
     var sphere = new THREE.SphereGeometry(0.5, 16, 8);
@@ -111,12 +114,36 @@ function init() {
     createRoof();
     createTable();
     createFloor();
+    createPicture();
+
+    createModel();
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
     document.addEventListener('keydown', onDocumentKeyDown, false);
     document.addEventListener('keyup', onDocumentKeyUp, false);
+}
+
+function createModel() {
+    var loader = new THREE.STLLoader();
+    loader.addEventListener('load', function (event) {
+
+        var geometry = event.content;
+        var material = new THREE.MeshPhongMaterial({ ambient: 0xff5533, color: 0xff5533, specular: 0x111111, shininess: 200 });
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.scale.set(0.05, 0.05, 0.05);
+        mesh.position.y = 5.85;
+        mesh.position.z = 1;
+        mesh.position.x = 1;
+        mesh.rotation.y = -Math.PI / 2;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        group.add(mesh);
+
+    });
+    loader.load('model/model.stl');
 }
 
 function createTable() {
@@ -320,6 +347,15 @@ function createGround() {
     var mesh = new THREE.Mesh(geometry, grassMaterial);
     mesh.position.y = 0;
     mesh.receiveShadow = true;
+    scene.add(mesh);
+}
+
+function createPicture() {
+    var geometry = new THREE.PlaneGeometry(3, 4);
+    var mesh = new THREE.Mesh(geometry, pictureMaterial);
+    mesh.position.z = -4.9;
+    mesh.position.y = 6;
+    mesh.position.x = 6;
     scene.add(mesh);
 }
 
