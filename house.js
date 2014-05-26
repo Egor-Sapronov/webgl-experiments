@@ -91,36 +91,36 @@ function init() {
 }
 
 function createTable() {
-    var geometry=new THREE.BoxGeometry(7,0.2,5);
-    var mesh=new THREE.Mesh(geometry,woodMaterial);
-    mesh.position.y=3;
-    mesh.position.z=2.5;
+    var geometry = new THREE.BoxGeometry(7, 0.2, 5);
+    var mesh = new THREE.Mesh(geometry, woodMaterial);
+    mesh.position.y = 3;
+    mesh.position.z = 2.5;
     group.add(mesh);
 
-    var geometry=new THREE.BoxGeometry(0.2,3,0.2);
-    var mesh=new THREE.Mesh(geometry,woodMaterial);
-    mesh.position.y=1.5;
-    mesh.position.z=1;
-    mesh.position.x=2;
+    var geometry = new THREE.BoxGeometry(0.2, 3, 0.2);
+    var mesh = new THREE.Mesh(geometry, woodMaterial);
+    mesh.position.y = 1.5;
+    mesh.position.z = 1;
+    mesh.position.x = 2;
     group.add(mesh);
-    var geometry=new THREE.BoxGeometry(0.2,3,0.2);
-    var mesh=new THREE.Mesh(geometry,woodMaterial);
-    mesh.position.y=1.5;
-    mesh.position.z=1;
-    mesh.position.x=-2;
+    var geometry = new THREE.BoxGeometry(0.2, 3, 0.2);
+    var mesh = new THREE.Mesh(geometry, woodMaterial);
+    mesh.position.y = 1.5;
+    mesh.position.z = 1;
+    mesh.position.x = -2;
     group.add(mesh);
 
-    var geometry=new THREE.BoxGeometry(0.2,3,0.2);
-    var mesh=new THREE.Mesh(geometry,woodMaterial);
-    mesh.position.y=1.5;
-    mesh.position.z=4;
-    mesh.position.x=2;
+    var geometry = new THREE.BoxGeometry(0.2, 3, 0.2);
+    var mesh = new THREE.Mesh(geometry, woodMaterial);
+    mesh.position.y = 1.5;
+    mesh.position.z = 4;
+    mesh.position.x = 2;
     group.add(mesh);
-    var geometry=new THREE.BoxGeometry(0.2,3,0.2);
-    var mesh=new THREE.Mesh(geometry,woodMaterial);
-    mesh.position.y=1.5;
-    mesh.position.z=4;
-    mesh.position.x=-2;
+    var geometry = new THREE.BoxGeometry(0.2, 3, 0.2);
+    var mesh = new THREE.Mesh(geometry, woodMaterial);
+    mesh.position.y = 1.5;
+    mesh.position.z = 4;
+    mesh.position.x = -2;
     group.add(mesh);
 }
 
@@ -213,26 +213,12 @@ function createWalls() {
     for (var i = 0; i < l; i++) {
         geometry.faces[i].materialIndex = 1;
     }
-    geometry.faces[44].materialIndex = 0;
-    geometry.faces[45].materialIndex = 0;
-    geometry.faces[64].materialIndex = 0;
-    geometry.faces[65].materialIndex = 0;
-    geometry.faces[84].materialIndex = 0;
-    geometry.faces[85].materialIndex = 0;
-    geometry.faces[104].materialIndex = 0;
-    geometry.faces[105].materialIndex = 0;
-    geometry.faces[124].materialIndex = 0;
-    geometry.faces[125].materialIndex = 0;
-    geometry.faces[54].materialIndex = 0;
-    geometry.faces[55].materialIndex = 0;
-    geometry.faces[74].materialIndex = 0;
-    geometry.faces[75].materialIndex = 0;
-    geometry.faces[94].materialIndex = 0;
-    geometry.faces[95].materialIndex = 0;
-    geometry.faces[114].materialIndex = 0;
-    geometry.faces[115].materialIndex = 0;
-    geometry.faces[134].materialIndex = 0;
-    geometry.faces[135].materialIndex = 0;
+
+    for (var i = 44; i <= 134; i += 10) {
+        geometry.faces[i].materialIndex=0;
+        geometry.faces[i+1].materialIndex=0;
+    }
+
     var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
     mesh.position.y = 5;
     mesh.position.z = 10;
@@ -245,30 +231,14 @@ function createWalls() {
     for (var i = 0; i < l; i++) {
         geometry.faces[i].materialIndex = 1;
     }
-    geometry.faces[82].materialIndex = 3;
-    geometry.faces[83].materialIndex = 3;
-    geometry.faces[102].materialIndex = 3;
-    geometry.faces[103].materialIndex = 3;
-    geometry.faces[122].materialIndex = 3;
-    geometry.faces[123].materialIndex = 3;
-    geometry.faces[142].materialIndex = 3;
-    geometry.faces[143].materialIndex = 3;
-    geometry.faces[162].materialIndex = 3;
-    geometry.faces[163].materialIndex = 3;
-    geometry.faces[182].materialIndex = 3;
-    geometry.faces[183].materialIndex = 3;
-    geometry.faces[84].materialIndex = 3;
-    geometry.faces[85].materialIndex = 3;
-    geometry.faces[104].materialIndex = 3;
-    geometry.faces[105].materialIndex = 3;
-    geometry.faces[124].materialIndex = 3;
-    geometry.faces[125].materialIndex = 3;
-    geometry.faces[144].materialIndex = 3;
-    geometry.faces[145].materialIndex = 3;
-    geometry.faces[164].materialIndex = 3;
-    geometry.faces[165].materialIndex = 3;
-    geometry.faces[184].materialIndex = 3;
-    geometry.faces[185].materialIndex = 3;
+
+    for (var i = 82; i <= 182; i += 20) {
+        geometry.faces[i].materialIndex=3;
+        geometry.faces[i+1].materialIndex=3;
+        geometry.faces[i+2].materialIndex=3;
+        geometry.faces[i+3].materialIndex=3;
+    }
+
     var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
     mesh.position.y = 5;
     mesh.position.z = 5;
@@ -293,47 +263,14 @@ function createWalls() {
     for (var i = 0; i < l; i++) {
         geometry.faces[i].materialIndex = 1;
     }
-    geometry.faces[42].materialIndex = 0;
-    geometry.faces[43].materialIndex = 0;
-    geometry.faces[62].materialIndex = 0;
-    geometry.faces[63].materialIndex = 0;
-    geometry.faces[82].materialIndex = 0;
-    geometry.faces[83].materialIndex = 0;
-    geometry.faces[102].materialIndex = 0;
-    geometry.faces[103].materialIndex = 0;
-    geometry.faces[122].materialIndex = 0;
-    geometry.faces[123].materialIndex = 0;
-    geometry.faces[44].materialIndex = 0;
-    geometry.faces[45].materialIndex = 0;
-    geometry.faces[64].materialIndex = 0;
-    geometry.faces[65].materialIndex = 0;
-    geometry.faces[84].materialIndex = 0;
-    geometry.faces[85].materialIndex = 0;
-    geometry.faces[104].materialIndex = 0;
-    geometry.faces[105].materialIndex = 0;
-    geometry.faces[124].materialIndex = 0;
-    geometry.faces[125].materialIndex = 0;
 
-    geometry.faces[56].materialIndex = 0;
-    geometry.faces[57].materialIndex = 0;
-    geometry.faces[54].materialIndex = 0;
-    geometry.faces[55].materialIndex = 0;
-    geometry.faces[76].materialIndex = 0;
-    geometry.faces[77].materialIndex = 0;
-    geometry.faces[74].materialIndex = 0;
-    geometry.faces[75].materialIndex = 0;
-    geometry.faces[96].materialIndex = 0;
-    geometry.faces[97].materialIndex = 0;
-    geometry.faces[94].materialIndex = 0;
-    geometry.faces[95].materialIndex = 0;
-    geometry.faces[116].materialIndex = 0;
-    geometry.faces[117].materialIndex = 0;
-    geometry.faces[114].materialIndex = 0;
-    geometry.faces[115].materialIndex = 0;
-    geometry.faces[136].materialIndex = 0;
-    geometry.faces[137].materialIndex = 0;
-    geometry.faces[134].materialIndex = 0;
-    geometry.faces[135].materialIndex = 0;
+    for (var i = 42; i <= 132; i += 10) {
+        geometry.faces[i].materialIndex=0;
+        geometry.faces[i+1].materialIndex=0;
+        geometry.faces[i+2].materialIndex=0;
+        geometry.faces[i+3].materialIndex=0;
+    }
+    
     var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
     mesh.position.y = 5;
     mesh.position.z = 5;
