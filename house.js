@@ -71,10 +71,10 @@ function init() {
     scene.add(group);
 
     //Lights
-    var sunlight = new THREE.DirectionalLight(0xffffff, 0.5);
-    sunlight.position.set(100, 200, 100);
+    var sunlight = new THREE.DirectionalLight(0xffffff, 1);
+    sunlight.position.set(140, 200, 100);
     sunlight.castShadow = true;
-    sunlight.shadowDarkness = 0.5;
+    sunlight.shadowDarkness = 0.6;
     sunlight.shadowCameraNear = 100;
     sunlight.shadowCameraFar = 400;
     sunlight.shadowCameraLeft = -100;
@@ -83,18 +83,19 @@ function init() {
     sunlight.shadowCameraBottom = -100;
     scene.add(sunlight);
 
-    var houseLight = new THREE.SpotLight(0xffffff, 1);
-    houseLight.position.set(0, 11, 2);
+    var houseLight = new THREE.SpotLight(0xffffff, 0.5);
+    houseLight.position.set(0, 11, 3);
     houseLight.castShadow = true;
-    houseLight.shadowCameraNear = 6;
-    houseLight.shadowCameraFar = 13;
-    houseLight.shadowCameraLeft = -6;
-    houseLight.shadowCameraRight = 6;
-    houseLight.shadowCameraTop = 6;
-    houseLight.shadowCameraBottom = -6;
+    houseLight.shadowDarkness=0.5;
+    houseLight.shadowCameraNear = 3;
+    houseLight.shadowCameraFar = 12;
+    houseLight.shadowCameraLeft = -3;
+    houseLight.shadowCameraRight = 3;
+    houseLight.shadowCameraTop = 3;
+    houseLight.shadowCameraBottom = -3;
     group.add(houseLight);
 
-    var pointLight = new THREE.PointLight(0xffffff, 0.5);
+    var pointLight = new THREE.PointLight(0xffffff, 3,20);
     pointLight.position = houseLight.position;
     group.add(pointLight);
     var sphere = new THREE.SphereGeometry(0.5, 16, 8);
@@ -222,6 +223,7 @@ function createWalls() {
     }
     var mesh = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
     mesh.position.y = 5;
+//    mesh.position.z = 10;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);
@@ -255,7 +257,7 @@ function createRoof() {
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 4));
     var mesh = new THREE.Mesh(geometry, roofMaterial);
     mesh.position.z = 2;
-    mesh.position.y = 12.2;
+    mesh.position.y = 12;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);
@@ -264,7 +266,7 @@ function createRoof() {
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 4));
     var mesh = new THREE.Mesh(geometry, roofMaterial);
     mesh.position.z = 8;
-    mesh.position.y = 12.2;
+    mesh.position.y = 12;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);
