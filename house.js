@@ -1,47 +1,13 @@
 var container;
-
 var camera, scene, renderer, controls, light;
-
 var group;
-
 var houseLight, pointLight, lamp;
+var brickMaterial, wallMaterial, roofMaterial, woodMaterial, floorMaterial, grassMaterial, pictureMaterial, worldMaterial;
+var house, mouse_x;
 
-var brickTexture = new THREE.ImageUtils.loadTexture('bricks.jpg');
-brickTexture.wrapS = brickTexture.wrapT = THREE.RepeatWrapping;
-brickTexture.repeat.set(2, 2);
-var brickMaterial = new THREE.MeshPhongMaterial({map: brickTexture, side: THREE.DoubleSide});
-
-var wallTexture = new THREE.ImageUtils.loadTexture('wall.jpg');
-wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
-wallTexture.repeat.set(2, 2);
-var wallMaterial = new THREE.MeshPhongMaterial({map: wallTexture, side: THREE.BackSide});
-
-var roofTexture = new THREE.ImageUtils.loadTexture('roof.jpg');
-roofTexture.wrapS = roofTexture.wrapT = THREE.RepeatWrapping;
-roofTexture.repeat.set(2, 2);
-var roofMaterial = new THREE.MeshPhongMaterial({map: roofTexture, side: THREE.DoubleSide});
-
-var woodTexture = new THREE.ImageUtils.loadTexture('wood.jpg');
-var woodMaterial = new THREE.MeshPhongMaterial({map: woodTexture, side: THREE.DoubleSide});
-
-var floorTexture = new THREE.ImageUtils.loadTexture('checkerboard.jpg');
-floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-floorTexture.repeat.set(10, 10);
-var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.DoubleSide, overdraw: 1 });
-
-var grassTexture = new THREE.ImageUtils.loadTexture('grass.jpg');
-var grassMaterial = new THREE.MeshPhongMaterial({map: grassTexture, side: THREE.DoubleSide, overdraw: 0});
-
-var pictureTexture = new THREE.ImageUtils.loadTexture('picture.jpg');
-var pictureMaterial = new THREE.MeshPhongMaterial({map: pictureTexture, side: THREE.FrontSide});
-
-var worldTexture = new THREE.ImageUtils.loadTexture('world.jpg');
-var worldMaterial = new THREE.MeshPhongMaterial({map: worldTexture, side: THREE.DoubleSide});
-
-
+createMaterials();
 init();
 animate();
-
 
 function init() {
     scene = new THREE.Scene();
@@ -49,7 +15,6 @@ function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    // CAMERA
     var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
     var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 10000;
     camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
@@ -64,12 +29,10 @@ function init() {
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-
     group = new THREE.Object3D();
     group.position.z = -5;
     scene.add(group);
 
-    //Lights
     createLights();
     createGround();
     createWalls();
@@ -80,18 +43,15 @@ function init() {
     createModel();
     createWorld();
 
-
     document.addEventListener('keydown', onDocumentKeyDown, false);
     document.addEventListener('keyup', onDocumentKeyUp, false);
     window.addEventListener('resize', onWindowResize, false);
 }
 
-var house, mouse_x;
 function onMouseDown(event) {
     mouse_x = event.clientX;
     house = group;
 }
-
 function onMouseMove(event) {
     if (!house) return;
 
@@ -104,7 +64,6 @@ function onMouseMove(event) {
     }
 
 }
-
 function onMouseUp(event) {
     house = false;
 }
@@ -384,6 +343,41 @@ function createLights() {
     group.add(lamp);
 }
 
+function createMaterials() {
+    var brickTexture = new THREE.ImageUtils.loadTexture('bricks.jpg');
+    brickTexture.wrapS = brickTexture.wrapT = THREE.RepeatWrapping;
+    brickTexture.repeat.set(2, 2);
+    brickMaterial = new THREE.MeshPhongMaterial({map: brickTexture, side: THREE.DoubleSide});
+
+    var wallTexture = new THREE.ImageUtils.loadTexture('wall.jpg');
+    wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
+    wallTexture.repeat.set(2, 2);
+    wallMaterial = new THREE.MeshPhongMaterial({map: wallTexture, side: THREE.BackSide});
+
+    var roofTexture = new THREE.ImageUtils.loadTexture('roof.jpg');
+    roofTexture.wrapS = roofTexture.wrapT = THREE.RepeatWrapping;
+    roofTexture.repeat.set(2, 2);
+    roofMaterial = new THREE.MeshPhongMaterial({map: roofTexture, side: THREE.DoubleSide});
+
+    var woodTexture = new THREE.ImageUtils.loadTexture('wood.jpg');
+    woodMaterial = new THREE.MeshPhongMaterial({map: woodTexture, side: THREE.DoubleSide});
+
+    var floorTexture = new THREE.ImageUtils.loadTexture('checkerboard.jpg');
+    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(10, 10);
+    floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.DoubleSide, overdraw: 1 });
+
+    var grassTexture = new THREE.ImageUtils.loadTexture('grass.jpg');
+    grassMaterial = new THREE.MeshPhongMaterial({map: grassTexture, side: THREE.DoubleSide, overdraw: 0});
+
+    var pictureTexture = new THREE.ImageUtils.loadTexture('picture.jpg');
+    pictureMaterial = new THREE.MeshPhongMaterial({map: pictureTexture, side: THREE.FrontSide});
+
+    var worldTexture = new THREE.ImageUtils.loadTexture('world.jpg');
+    worldMaterial = new THREE.MeshPhongMaterial({map: worldTexture, side: THREE.DoubleSide});
+    return {brickMaterial: brickMaterial, wallMaterial: wallMaterial, roofMaterial: roofMaterial, woodMaterial: woodMaterial, floorMaterial: floorMaterial, grassMaterial: grassMaterial, pictureMaterial: pictureMaterial, worldMaterial: worldMaterial};
+}
+
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -420,7 +414,6 @@ function onDocumentKeyUp(event) {
         document.removeEventListener('mouseup', onMouseUp, false);
     }
 }
-
 
 function animate() {
     requestAnimationFrame(animate);
