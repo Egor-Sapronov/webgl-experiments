@@ -35,13 +35,16 @@ var woodMaterial = new THREE.MeshPhongMaterial({map: woodTexture, side: THREE.Do
 var floorTexture = new THREE.ImageUtils.loadTexture('checkerboard.jpg');
 floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
 floorTexture.repeat.set(10, 10);
-var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.BackSide, overdraw: 1 });
+var floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture, side: THREE.DoubleSide, overdraw: 1 });
 
 var grassTexture = new THREE.ImageUtils.loadTexture('grass.jpg');
 var grassMaterial = new THREE.MeshPhongMaterial({map: grassTexture, side: THREE.DoubleSide, overdraw: 0});
 
 var pictureTexture = new THREE.ImageUtils.loadTexture('picture.jpg');
 var pictureMaterial = new THREE.MeshPhongMaterial({map: pictureTexture, side: THREE.FrontSide});
+
+var worldTexture = new THREE.ImageUtils.loadTexture('world.jpg');
+var worldMaterial = new THREE.MeshPhongMaterial({map: worldTexture, side: THREE.DoubleSide});
 
 
 init();
@@ -74,8 +77,8 @@ function init() {
     scene.add(group);
 
     //Lights
-    var sunlight = new THREE.DirectionalLight(0xffffff, 1);
-    sunlight.position.set(140, 200, 100);
+    var sunlight = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight.position.set(140, 100, 100);
     sunlight.castShadow = true;
     sunlight.shadowDarkness = 0.6;
     sunlight.shadowCameraNear = 100;
@@ -85,6 +88,14 @@ function init() {
     sunlight.shadowCameraTop = 100;
     sunlight.shadowCameraBottom = -100;
     scene.add(sunlight);
+
+    var sunlight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight2.position.set(100, 200, -70);
+    scene.add(sunlight2);
+
+    var sunlight3 = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight3.position.set(-100, 200, 70);
+    scene.add(sunlight3);
 
     houseLight = new THREE.SpotLight(0xffffff, 0.5);
     houseLight.position.set(0, 11, 3);
@@ -118,12 +129,14 @@ function init() {
 
     createModel();
 
+    createWorld();
+
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
     document.addEventListener('keydown', onDocumentKeyDown, false);
     document.addEventListener('keyup', onDocumentKeyUp, false);
-    window.addEventListener( 'resize', onWindowResize, false );
+    window.addEventListener('resize', onWindowResize, false);
 }
 
 function createModel() {
@@ -343,7 +356,7 @@ function createFloor() {
 }
 
 function createGround() {
-    var geometry = new THREE.PlaneGeometry(100, 100, 10, 14);
+    var geometry = new THREE.PlaneGeometry(1000, 1000, 10, 14);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
     var mesh = new THREE.Mesh(geometry, grassMaterial);
     mesh.position.y = 0;
@@ -360,11 +373,18 @@ function createPicture() {
     group.add(mesh);
 }
 
+function createWorld() {
+    var geomemtry = new THREE.BoxGeometry(1000, 1000, 1000)
+    var mesh = new THREE.Mesh(geomemtry, worldMaterial);
+    mesh.position.y=400;
+    scene.add(mesh);
+}
+
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function onDocumentKeyDown(event) {
@@ -462,13 +482,13 @@ function animate() {
 function render() {
     if (controls.enabled == false) {
 
-        if (group.position.x < 30 && group.position.x > -30)
+        if (group.position.x < 500 && group.position.x > -500)
             group.position.x += ( targetRotation - group.position.y ) * 0.05;
         else {
-            if (group.position.x >= 30)
-                group.position.x = 29.999999;
+            if (group.position.x >= 500)
+                group.position.x = 499.99999;
             else
-                group.position.x = -29.999999;
+                group.position.x = -499.99999;
         }
     }
     renderer.render(scene, camera);
