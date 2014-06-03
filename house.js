@@ -1,18 +1,10 @@
 var container;
 
-var camera, scene, renderer, controls, light, dirLight, hemiLight;
+var camera, scene, renderer, controls, light;
 
 var group;
 
 var houseLight, pointLight, lamp;
-
-var targetRotation = 0;
-var targetRotationOnMouseDown = 0;
-var mouseX = 0;
-var mouseXOnMouseDown = 0;
-
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
 
 var brickTexture = new THREE.ImageUtils.loadTexture('bricks.jpg');
 brickTexture.wrapS = brickTexture.wrapT = THREE.RepeatWrapping;
@@ -50,6 +42,7 @@ var worldMaterial = new THREE.MeshPhongMaterial({map: worldTexture, side: THREE.
 init();
 animate();
 
+
 function init() {
     scene = new THREE.Scene();
 
@@ -77,66 +70,43 @@ function init() {
     scene.add(group);
 
     //Lights
-    var sunlight = new THREE.DirectionalLight(0xffffff, 0.6);
-    sunlight.position.set(140, 100, 100);
-    sunlight.castShadow = true;
-    sunlight.shadowDarkness = 0.6;
-    sunlight.shadowCameraNear = 100;
-    sunlight.shadowCameraFar = 400;
-    sunlight.shadowCameraLeft = -100;
-    sunlight.shadowCameraRight = 100;
-    sunlight.shadowCameraTop = 100;
-    sunlight.shadowCameraBottom = -100;
-    scene.add(sunlight);
-
-    var sunlight2 = new THREE.DirectionalLight(0xffffff, 0.6);
-    sunlight2.position.set(100, 200, -70);
-    scene.add(sunlight2);
-
-    var sunlight3 = new THREE.DirectionalLight(0xffffff, 0.6);
-    sunlight3.position.set(-100, 200, 70);
-    scene.add(sunlight3);
-
-    houseLight = new THREE.SpotLight(0xffffff, 0.5);
-    houseLight.position.set(0, 11, 3);
-    houseLight.castShadow = true;
-    houseLight.shadowDarkness = 0.5;
-    houseLight.shadowCameraNear = 3;
-    houseLight.shadowCameraFar = 12;
-    houseLight.shadowCameraLeft = -3;
-    houseLight.shadowCameraRight = 3;
-    houseLight.shadowCameraTop = 3;
-    houseLight.shadowCameraBottom = -3;
-    group.add(houseLight);
-
-    pointLight = new THREE.PointLight(0xffffff, 3, 20);
-    pointLight.position = houseLight.position;
-    group.add(pointLight);
-    var sphere = new THREE.SphereGeometry(0.5, 16, 8);
-    lamp = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    lamp.position = houseLight.position;
-    group.add(lamp);
-
-
+    createLights();
     createGround();
-
-    // House
     createWalls();
     createRoof();
     createTable();
     createFloor();
     createPicture();
-
     createModel();
-
     createWorld();
 
-    document.addEventListener('mousedown', onDocumentMouseDown, false);
-    document.addEventListener('touchstart', onDocumentTouchStart, false);
-    document.addEventListener('touchmove', onDocumentTouchMove, false);
+
     document.addEventListener('keydown', onDocumentKeyDown, false);
     document.addEventListener('keyup', onDocumentKeyUp, false);
     window.addEventListener('resize', onWindowResize, false);
+}
+
+var house, mouse_x;
+function onMouseDown(event) {
+    mouse_x = event.clientX;
+    house = group;
+}
+
+function onMouseMove(event) {
+    if (!house) return;
+
+    var x_diff = event.clientX - mouse_x;
+    house.__dirtyPosition = true;
+    var newPosition = house.position.x + x_diff;
+    if (newPosition < 480 && newPosition > -480) {
+        house.position.x = newPosition;
+        mouse_x = event.clientX;
+    }
+
+}
+
+function onMouseUp(event) {
+    house = false;
 }
 
 function createModel() {
@@ -159,7 +129,6 @@ function createModel() {
     });
     loader.load('model/model.stl');
 }
-
 function createTable() {
     var geometry = new THREE.BoxGeometry(7, 0.2, 5);
     var mesh = new THREE.Mesh(geometry, woodMaterial);
@@ -203,7 +172,6 @@ function createTable() {
     mesh.receiveShadow = true;
     group.add(mesh);
 }
-
 function createWalls() {
     var material = new THREE.MeshPhongMaterial({  side: THREE.DoubleSide, opacity: 0.3, transparent: true });
     var material2 = new THREE.MeshPhongMaterial({  side: THREE.DoubleSide, opacity: 0.0, transparent: true});
@@ -292,7 +260,6 @@ function createWalls() {
     mesh.receiveShadow = true;
     group.add(mesh);
 }
-
 function createRoof() {
     var geometry = new THREE.PlaneGeometry(40, 8.5, 10, 10);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 4));
@@ -343,7 +310,6 @@ function createRoof() {
     mesh.receiveShadow = true;
     group.add(mesh);
 }
-
 function createFloor() {
     var geometry = new THREE.PlaneGeometry(40, 10, 15, 15);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
@@ -354,7 +320,6 @@ function createFloor() {
 
     group.add(mesh);
 }
-
 function createGround() {
     var geometry = new THREE.PlaneGeometry(1000, 1000, 10, 14);
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
@@ -363,7 +328,6 @@ function createGround() {
     mesh.receiveShadow = true;
     scene.add(mesh);
 }
-
 function createPicture() {
     var geometry = new THREE.PlaneGeometry(3, 4);
     var mesh = new THREE.Mesh(geometry, pictureMaterial);
@@ -372,12 +336,52 @@ function createPicture() {
     mesh.position.x = 6;
     group.add(mesh);
 }
-
 function createWorld() {
     var geomemtry = new THREE.BoxGeometry(1000, 1000, 1000)
     var mesh = new THREE.Mesh(geomemtry, worldMaterial);
-    mesh.position.y=400;
+    mesh.position.y = 400;
     scene.add(mesh);
+}
+function createLights() {
+    var sunlight = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight.position.set(140, 100, 100);
+    sunlight.castShadow = true;
+    sunlight.shadowDarkness = 0.6;
+    sunlight.shadowCameraNear = 100;
+    sunlight.shadowCameraFar = 400;
+    sunlight.shadowCameraLeft = -100;
+    sunlight.shadowCameraRight = 100;
+    sunlight.shadowCameraTop = 100;
+    sunlight.shadowCameraBottom = -100;
+    scene.add(sunlight);
+
+    var sunlight2 = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight2.position.set(100, 200, -70);
+    scene.add(sunlight2);
+
+    var sunlight3 = new THREE.DirectionalLight(0xffffff, 0.6);
+    sunlight3.position.set(-100, 200, 70);
+    scene.add(sunlight3);
+
+    houseLight = new THREE.SpotLight(0xffffff, 0.5);
+    houseLight.position.set(0, 11, 3);
+    houseLight.castShadow = true;
+    houseLight.shadowDarkness = 0.5;
+    houseLight.shadowCameraNear = 3;
+    houseLight.shadowCameraFar = 12;
+    houseLight.shadowCameraLeft = -3;
+    houseLight.shadowCameraRight = 3;
+    houseLight.shadowCameraTop = 3;
+    houseLight.shadowCameraBottom = -3;
+    group.add(houseLight);
+
+    pointLight = new THREE.PointLight(0xffffff, 3, 20);
+    pointLight.position = houseLight.position;
+    group.add(pointLight);
+    var sphere = new THREE.SphereGeometry(0.5, 16, 8);
+    lamp = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    lamp.position = houseLight.position;
+    group.add(lamp);
 }
 
 function onWindowResize() {
@@ -388,8 +392,13 @@ function onWindowResize() {
 }
 
 function onDocumentKeyDown(event) {
-    if (event.keyCode == 16)
+    if (event.keyCode == 16) {
         controls.enabled = false;
+        document.addEventListener('mousedown', onMouseDown, false);
+        document.addEventListener('mouseup', onMouseUp, false);
+        document.addEventListener('mousemove', onMouseMove, false);
+    }
+
 
     if (event.keyCode == 32) {
         if (houseLight.intensity == 0) {
@@ -403,73 +412,13 @@ function onDocumentKeyDown(event) {
         }
     }
 }
-
 function onDocumentKeyUp(event) {
-    if (event.keyCode == 16)
+    if (event.keyCode == 16) {
         controls.enabled = true;
-}
-
-function onDocumentMouseDown(event) {
-
-    event.preventDefault();
-
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
-    document.addEventListener('mouseup', onDocumentMouseUp, false);
-    document.addEventListener('mouseout', onDocumentMouseOut, false);
-
-    mouseXOnMouseDown = event.clientX - windowHalfX;
-    targetRotationOnMouseDown = targetRotation;
-
-}
-
-function onDocumentMouseMove(event) {
-
-    mouseX = event.clientX - windowHalfX;
-
-    targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.02;
-
-}
-
-function onDocumentMouseUp(event) {
-
-    document.removeEventListener('mousemove', onDocumentMouseMove, false);
-    document.removeEventListener('mouseup', onDocumentMouseUp, false);
-    document.removeEventListener('mouseout', onDocumentMouseOut, false);
-
-}
-
-function onDocumentMouseOut(event) {
-
-    document.removeEventListener('mousemove', onDocumentMouseMove, false);
-    document.removeEventListener('mouseup', onDocumentMouseUp, false);
-    document.removeEventListener('mouseout', onDocumentMouseOut, false);
-
-}
-
-function onDocumentTouchStart(event) {
-
-    if (event.touches.length === 1) {
-
-        event.preventDefault();
-
-        mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
-        targetRotationOnMouseDown = targetRotation;
-
+        document.removeEventListener('mousedown', onMouseDown, false);
+        document.removeEventListener('mousemove', onMouseMove, false);
+        document.removeEventListener('mouseup', onMouseUp, false);
     }
-
-}
-
-function onDocumentTouchMove(event) {
-
-    if (event.touches.length === 1) {
-
-        event.preventDefault();
-
-        mouseX = event.touches[ 0 ].pageX - windowHalfX;
-        targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.05;
-
-    }
-
 }
 
 
@@ -480,16 +429,5 @@ function animate() {
 }
 
 function render() {
-    if (controls.enabled == false) {
-
-        if (group.position.x < 500 && group.position.x > -500)
-            group.position.x += ( targetRotation - group.position.y ) * 0.05;
-        else {
-            if (group.position.x >= 500)
-                group.position.x = 499.99999;
-            else
-                group.position.x = -499.99999;
-        }
-    }
     renderer.render(scene, camera);
 }
