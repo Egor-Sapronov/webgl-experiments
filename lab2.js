@@ -2,6 +2,8 @@ var camera, scene, renderer, container, group;
 
 var width = 1000, height = 600;
 
+var color = 0x0000FF;
+var head, bottom;
 init();
 animate();
 
@@ -25,7 +27,6 @@ function init() {
 
     paint();
 }
-
 
 function paint() {
     var vertices = [];
@@ -52,9 +53,9 @@ function paint() {
 
 
     var holes = [];
-    var triangles, mesh;
+    var triangles;
     var geometry = new THREE.Geometry();
-    var material = new THREE.MeshBasicMaterial({color: 0xffaa00, side: THREE.DoubleSide});
+    var material = new THREE.MeshBasicMaterial({color: color, side: THREE.DoubleSide, wireframe: false});
     geometry.vertices = vertices;
 
     triangles = THREE.Shape.Utils.triangulateShape(vertices, holes);
@@ -63,10 +64,10 @@ function paint() {
         geometry.faces.push(new THREE.Face3(triangles[i][0], triangles[i][1], triangles[i][2]));
 
     }
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.scale.x = 3;
-    mesh.scale.y = 3;
-    group.add(mesh);
+    head = new THREE.Mesh(geometry, material);
+    head.scale.x = 3;
+    head.scale.y = 3;
+    group.add(head);
 
     vertices = [
         new THREE.Vector3(60, 60, 0),
@@ -76,19 +77,19 @@ function paint() {
     ];
 
     var holes = [];
-    var triangles, mesh;
+    var triangles;
     var geometry = new THREE.Geometry();
     geometry.vertices = vertices;
-    triangles = THREE.Shape.Utils.triangulateShape(vertices,holes)
+    triangles = THREE.Shape.Utils.triangulateShape(vertices, holes)
     for (var i = 0; i < triangles.length; i++) {
 
         geometry.faces.push(new THREE.Face3(triangles[i][0], triangles[i][1], triangles[i][2]));
 
     }
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.scale.x = 3;
-    mesh.scale.y = 3;
-    group.add(mesh);
+    bottom = new THREE.Mesh(geometry, material);
+    bottom.scale.x = 3;
+    bottom.scale.y = 3;
+    group.add(bottom);
 
     group.position.x = -140;
     group.position.y = -100;
@@ -102,4 +103,19 @@ function animate() {
 
 function render() {
     renderer.render(scene, camera);
+}
+
+function onRedCick() {
+    head.material.color.setHex(0xFF0000);
+}
+
+function onBlueClick() {
+    head.material.color.setHex(0x0000ff);
+}
+
+function onWireFrameClick() {
+    if (head.material.wireframe == false)
+        head.material.wireframe = true;
+    else
+        head.material.wireframe = false;
 }
